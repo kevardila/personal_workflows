@@ -1,13 +1,11 @@
 name: Unit Testing Execution
 
 on:
-  pull_request:
-    branches:
-      - prod
-      - preprod
-      - 'release/*'
-      - development
-      
+  workflow_call:
+    inputs:
+      java-version:
+        required: false
+        type: string
 jobs:
   unit-teting:
     runs-on: ubuntu-latest
