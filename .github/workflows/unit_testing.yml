@@ -1,11 +1,7 @@
 name: Unit Testing Execution
 
-on:
-  workflow_call:
-    inputs:
-      java-version:
-        required: false
-        type: string
+on: workflow_call
+
 jobs:
   unit-teting:
     runs-on: ubuntu-latest
