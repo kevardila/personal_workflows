@@ -6,6 +6,9 @@ on:
       java-version:
         required: true
         type: string
+      distribution:
+        required: true
+        type: string
 
 jobs:
   unit-teting:
@@ -19,7 +22,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: ${{ inputs.java-version }}
-        distribution: 'temurin'
+        distribution: ${{ inputs.distribution }}
 
     - name: Run unit tests with Maven
       run: mvn test
