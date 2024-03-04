@@ -11,7 +11,7 @@ on:
         type: string
       coverage:
         required: true
-        type: integer
+        type: string
 
 jobs:
   unit-teting:
