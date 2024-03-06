@@ -18,8 +18,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout code repository
       uses: actions/checkout@v4
+      with:
+        path: './repo-code'
+    
+    - name: Checkout templates repository
+      uses: actions/checkout@v4
+      with:
+        repository: 'kevardila/personal_workflows'
+        ref: 'v5.0.0'
+        path: './repo-templates'
+        sparse-checkout: |
+          Dockerfile
+        sparse-checkout-cone-mode: false
+    
+    - name: show repo code
+      run: |
+        cd repo-code
+        ls
+
+    - name: show repo templates
+      run: |
+        cd repo-templates
+        ls
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -28,7 +50,9 @@ jobs:
         distribution: ${{ inputs.distribution }}
 
     - name: Run unit tests with Maven
-      run: mvn test
+      run: |
+        cd './repo-code'
+        mvn test
 
     - name: Generate JaCoCo Badge
       uses: cicirello/jacoco-badge-generator@v2
