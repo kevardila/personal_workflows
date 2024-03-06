@@ -59,7 +59,7 @@ jobs:
       id: jacoco
       with:
         generate-branches-badge: true
-        jacoco-csv-file: target/site/jacoco/jacoco.csv
+        jacoco-csv-file: repo-code/target/site/jacoco/jacoco.csv
         fail-if-coverage-less-than: ${{ inputs.coverage }}
         fail-if-branches-less-than: ${{ inputs.coverage }}
 
