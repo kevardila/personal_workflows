@@ -1,0 +1,62 @@
+---
+    name: Pull request accepted
+    
+    on: workflow_call
+    
+    jobs:
+      versioning:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        steps:
+    
+        - name: Checkout code
+          uses: actions/checkout@v4
+    
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 18
+    
+        - name: Get the approval comment
+          id: get_comment
+          run: |
+            {
+              echo 'comment<<EOF'
+              git log -1 --format=%B ${{ github.sha }}
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+    
+        - name: Show approval comment
+          id: show_comment
+          run: echo "${{ steps.get_comment.outputs.comment }}"
+    
+        - name: Set local git creddentials
+          run: |
+            git config --local user.email "kevin.ardila@bvc.com.co"
+            git config --local user.name "kevardila"
+    
+        - name: Generate bumping version as patch
+          if: contains(steps.get_comment.outputs.comment, 'patch')
+          run: npx @dwmkerr/standard-version --release-as patch --packageFiles pom.xml --bumpFiles pom.xml
+        
+        - name: Generate bumping version as minor
+          if: contains(steps.get_comment.outputs.comment, 'minor')
+          run: npx @dwmkerr/standard-version --release-as minor --packageFiles pom.xml --bumpFiles pom.xml
+    
+        - name: Generate bumping version as major
+          if: contains(steps.get_comment.outputs.comment, 'major')
+          run: npx @dwmkerr/standard-version --release-as major --packageFiles pom.xml --bumpFiles pom.xml
+    
+        - name: Push changelog and pom.xml
+          run: git push
+    
+        - name: Push generated tag
+          run: git push --tags
+        
+        - name: Get created semantic tag
+          id: get_created_tag
+          run: |
+            echo "created_version=$(git log -1 --pretty=%B | sed -n 's/.*: \([0-9]\+\.[0-9]\+\.[0-9]\+\)$/\1/p')" >> $GITHUB_OUTPUT
+        
+        - name: Show created semantic tag
+          id: show_version
+          run: echo "${{ steps.get_created_tag.outputs.created_version }}"
